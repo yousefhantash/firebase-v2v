@@ -1,0 +1,141 @@
+body {
+    background-color: #222121;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+span {
+    color: #f8f849;
+}
+
+/* Navbar */
+.navbar {
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+}
+
+.bell-icon {
+    position: relative;
+    cursor: pointer;
+}
+
+.notification-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* Notifications dropdown */
+.notifications-dropdown {
+    position: absolute;
+    top: 60px;
+    /* Position below the bell icon */
+    right: 20px;
+    background-color: white;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.notification-item {
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.logo {
+    font-size: 1.5rem;
+    color: #f8f849;
+}
+
+.admin-title {
+    font-size: 1.8rem;
+}
+
+.logout-button {
+    width: 100px;
+    background-color: #f8f849;
+    color: #222121;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.logout-button:hover {
+    background-color: #ffd700;
+}
+
+.section {
+    margin: 20px;
+}
+
+.card {
+    background-color: #333333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.project-map {
+    width: 100%;
+    max-height: 400px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+.vehicle-cards {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+}
+
+.vehicle-card {
+    min-width: 250px;
+}
+
+button {
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 20px;
+    color: #272525;
+    background: #eed40f;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background: #6a751b;
+}

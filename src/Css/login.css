@@ -1,0 +1,95 @@
+.login {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #f8f849, #383e1a);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background: #222121;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.logo img {
+    width: 250px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    color: #f0de20;
+    margin-bottom: 5px;
+    margin-left: 40px;
+}
+
+input {
+    width: 73%;
+    padding: 10px;
+    margin-left: 40px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input:focus {
+    border-color: #eed40f;
+    border-radius: 8px;
+    border-width: 5px;
+    transition: border-color 0.3s ease, border-radius 0.3s ease, border-width 0.3s ease;
+}
+
+button {
+    width: 80%;
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 20px;
+    color: #272525;
+    background: #eed40f;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background: #6a751b;
+}
+
+.error-message {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+span {
+    color: #eed40f;
+}
