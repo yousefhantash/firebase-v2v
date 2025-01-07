@@ -8,6 +8,7 @@ import "./Css/dashboard.css";
 import "./Css/loading.css";
 import { firebaseApp } from "./firebaseConfig";
 import logo from "./images/logo.png";
+import car from "./images/Uber Black.jpeg";
 
 const Dashboard = () => {
   const [data, setData] = useState(null);
@@ -15,6 +16,8 @@ const Dashboard = () => {
   const [authLoading, setAuthLoading] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [highlightedLocations, setHighlightedLocations] = useState({});
+  const [emergencyStatus, setEmergencyStatus] = useState(null); // حالة الطوارئ
   const navigate = useNavigate();
   const auth = getAuth(firebaseApp);
 
@@ -23,7 +26,6 @@ const Dashboard = () => {
       if (!user) {
         navigate("/login");
       } else {
-        // Check if the toast has already been shown
         if (!localStorage.getItem("toastShown")) {
           localStorage.setItem("toastShown", "true");
           toast.success("Successfully logged in!");
@@ -35,36 +37,42 @@ const Dashboard = () => {
         const unsubscribeData = onValue(dataRef, (snapshot) => {
           if (snapshot.exists()) {
             const newData = snapshot.val();
-            setData(newData);
-            setLoading(false);
+            setData((prevData) => {
+              const newHighlightedLocations = {};
 
-            // Check for new accidents
-            const { last_Accident_location, last_Accident_time } =
-              newData.Accident_info || {};
-            if (last_Accident_location && last_Accident_time) {
-              // Check time difference (only notify if the accident occurred within the last 30 minutes)
-              const currentTime = new Date().getTime();
-              const accidentTime = new Date(last_Accident_time).getTime();
-              const timeDifference = (currentTime - accidentTime) / 60000; // Difference in minutes
-
-              // Only notify if the accident occurred in the last 30 minutes
-              if (timeDifference <= 10000) {
-                const newNotification = {
-                  location: last_Accident_location,
-                  time: last_Accident_time,
-                };
-
-                // Add the new notification, keeping only the latest 5
-                setNotifications((prev) => {
-                  const updatedNotifications = [newNotification, ...prev];
-                  return updatedNotifications.slice(0, 5); // Keep only the latest 5
+              // مقارنة المواقع الحالية مع المواقع السابقة لتحديد التغييرات
+              if (prevData?.vehicles_info) {
+                Object.keys(newData.vehicles_info).forEach((key) => {
+                  if (
+                    newData.vehicles_info[key]?.last_location !==
+                    prevData.vehicles_info[key]?.last_location
+                  ) {
+                    newHighlightedLocations[key] = true;
+                  }
                 });
-
-                toast.info(
-                  `🚨 New Accident at ${last_Accident_location} at ${last_Accident_time}`
-                );
               }
-            }
+
+              setHighlightedLocations(newHighlightedLocations);
+              setTimeout(() => {
+                setHighlightedLocations({});
+              }, 3000); // إزالة التوهج بعد 3 ثوانٍ
+
+              // تحديث حالة الطوارئ فقط إذا كانت قد تغيرت
+              if (newData?.emergencyStatus !== prevData?.emergencyStatus) {
+                setEmergencyStatus(newData?.emergencyStatus || "false");
+
+                // التحقق من تغيير حالة الطوارئ الخاصة بـ intersection_1
+                if (newData?.intersection_1 !== prevData?.intersection_1) {
+                  const updatedEmergencyStatus =
+                    newData?.intersection_1 === "true" ? "Active" : "Inactive";
+                  setEmergencyStatus(updatedEmergencyStatus);
+                }
+              }
+
+              return newData;
+            });
+
+            setLoading(false);
           } else {
             console.log("No data available");
             setLoading(false);
@@ -85,8 +93,7 @@ const Dashboard = () => {
     signOut(auth)
       .then(() => {
         localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("toastShown"); // Remove toast flag on logout
-        // Save logout state in localStorage to show toast on login page
+        localStorage.removeItem("toastShown");
         localStorage.setItem("logout", "true");
         setTimeout(() => {
           navigate("/login");
@@ -100,7 +107,7 @@ const Dashboard = () => {
   };
 
   const handleCloseNotifications = () => {
-    setNotifications([]); // Clear notifications when closed
+    setNotifications([]);
     setShowNotifications(false);
   };
 
@@ -116,17 +123,18 @@ const Dashboard = () => {
     return <div>No data available</div>;
   }
 
-  const { Accident_info, addresses, emergencyStatus, vehicles_info } = data;
+  const { Accident_info, vehicles_info } = data;
   const { last_Accident_location, last_Accident_time } = Accident_info || {};
 
   return (
     <div className="dashboard-container">
-      {/* Navbar with bell icon */}
       <nav className="navbar">
         <div className="logo">
           <img src={logo} alt="Project Logo" />
         </div>
-        <h1 className="admin-title">Admin Dashboard</h1>
+        <h1 className="admin-title">
+          Admin <span>Dashboard</span>
+        </h1>
         <div
           className="bell-icon"
           onClick={() => setShowNotifications(!showNotifications)}
@@ -138,14 +146,13 @@ const Dashboard = () => {
         </button>
       </nav>
 
-      {/* Notifications Dropdown */}
       {showNotifications && (
         <div className="notifications-dropdown">
           <h3>Recent Accidents</h3>
           {notifications.length > 0 ? (
             notifications.map((notification, index) => (
               <div key={index} className="notification-item">
-                <p>{`🚨 Accident at ${notification.location} at ${notification.time}`}</p>
+                <p>{`Accident at ${notification.location} at ${notification.time}`}</p>
               </div>
             ))
           ) : (
@@ -160,72 +167,75 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Accident Section */}
-      <div className="section accident-section">
-        <h2>🚨 Last Accident</h2>
-        <div className="card accident-card">
-          {last_Accident_location && last_Accident_time ? (
-            <>
-              <p>
-                <strong>📍 Location:</strong> {last_Accident_location}
-              </p>
-              <p>
-                <strong>⏰ Time:</strong> {last_Accident_time}
-              </p>
-            </>
-          ) : (
-            <p>No accident data available</p>
-          )}
+      <div className="sections-container">
+        {/* Vehicles Section */}
+        <div className="section vehicles-section">
+          <h2 className="text-vehicles">Vehicles Information</h2>
+          <div className="vehicle-cards">
+            {vehicles_info &&
+              Object.keys(vehicles_info).map((vehicleKey) => (
+                <div className="card vehicle-card" key={vehicleKey}>
+                  <img
+                    src={vehicles_info[vehicleKey]?.image || car}
+                    alt={`${vehicleKey} car`}
+                  />
+                  <p>
+                    <strong>Vehicle:</strong> {vehicleKey}
+                  </p>
+                  <p
+                    className={`location-text ${
+                      highlightedLocations[vehicleKey] ? "highlight" : ""
+                    }`}
+                  >
+                    <strong>Last Location:</strong>{" "}
+                    {vehicles_info[vehicleKey]?.last_location}
+                  </p>
+                </div>
+              ))}
+          </div>
+        </div>
+
+        {/* Accident Section */}
+        <div className="section accident-section">
+          <h2 className="accident-title">Recent Accident Details</h2>
+          <div className="card accident-card">
+            {last_Accident_location && last_Accident_time ? (
+              <>
+                {/* Dropdown to toggle accident details */}
+                <details className="accident-details">
+                  <summary className="accident-summary">
+                    Accident at {last_Accident_location} (Click for details)
+                  </summary>
+                  <div className="accident-info">
+                    <p>
+                      <strong>Location:</strong> {last_Accident_location}
+                    </p>
+                    <p>
+                      <strong>Time:</strong> {last_Accident_time}
+                    </p>
+                  </div>
+                </details>
+              </>
+            ) : (
+              <p className="no-accident">No accident data available</p>
+            )}
+          </div>
+        </div>
+
+        {/* Emergency Status Section */}
+        <div className="section emergency-status-section">
+          <h2 className="emergency-status-title">Emergency Status</h2>
+          <div className="card emergency-status-card">
+            <p>
+              <strong>Status:</strong>{" "}
+              {emergencyStatus.intersection_1 === "true"
+                ? "Active"
+                : "Inactive"}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Project Map Section */}
-      <div className="section map-section">
-        <h2>🗺️ Project Map</h2>
-        <img
-          src="/path-to-map-image.jpg"
-          alt="Project Map"
-          className="project-map"
-        />
-      </div>
-
-      {/* Addresses Section */}
-      <div className="section addresses-section">
-        <h2>🏙️ Addresses</h2>
-        <div className="addresses">
-          {addresses &&
-            Object.keys(addresses).map((key) => (
-              <p key={key}>
-                <strong>{key}:</strong> {addresses[key]} 🛣️
-              </p>
-            ))}
-        </div>
-      </div>
-
-      {/* Vehicles Information Section */}
-      <div className="section vehicles-section">
-        <h2>🚘 Vehicles Information</h2>
-        <div className="vehicle-cards">
-          {vehicles_info &&
-            Object.keys(vehicles_info).map((vehicleKey) => (
-              <div className="card vehicle-card" key={vehicleKey}>
-                <p>
-                  <strong>🔑 Vehicle:</strong> {vehicleKey}
-                </p>
-                <p>
-                  <strong>📍 Last Location:</strong>{" "}
-                  {vehicles_info[vehicleKey]?.last_location}
-                </p>
-                <p>
-                  <strong>⏰ Last Time:</strong>{" "}
-                  {vehicles_info[vehicleKey]?.last_time}
-                </p>
-              </div>
-            ))}
-        </div>
-      </div>
-
-      {/* Notifications container */}
       <ToastContainer
         position="bottom-right"
         autoClose={1000}

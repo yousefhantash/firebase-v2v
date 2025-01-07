@@ -67,6 +67,7 @@ span {
 
 .admin-title {
     font-size: 1.8rem;
+    margin-left: 160px;
 }
 
 .logout-button {
@@ -74,6 +75,7 @@ span {
     background-color: #f8f849;
     color: #222121;
     padding: 10px 20px;
+    margin-right: 60px;
     border: none;
     border-radius: 5px;
     font-weight: bold;
@@ -89,17 +91,52 @@ span {
     margin: 20px;
 }
 
-.card {
-    background-color: #333333;
+.vehicle-cards {
+    display: flex;
+    justify-content: center;
+    /* لجعل الكروت في المنتصف */
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    /* مسافة بين الكروت */
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4);
-    margin-bottom: 20px;
-    transition: transform 0.3s;
 }
 
-.card:hover {
+.vehicle-card {
+    width: 300px;
+    /* عرض الكرت */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* إضافة ظل */
+    overflow: hidden;
+    /* لإخفاء أي عناصر خارجة عن حدود الكرت */
+    text-align: center;
+    /* لتوسيط النصوص */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* أنيميشن عند التحويم */
+}
+
+.vehicle-card:hover {
     transform: scale(1.05);
+    /* تكبير الكرت عند التحويم */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    /* تعزيز الظل عند التحويم */
+}
+
+.vehicle-card img {
+    width: 100%;
+    /* عرض الصورة يناسب الكرت */
+    height: 150px;
+    /* ارتفاع ثابت للصورة */
+    object-fit: cover;
+    /* لضمان ملاءمة الصورة للكرت */
+}
+
+.vehicle-card p {
+    margin: 10px 0;
+    color: #333;
+    font-size: 16px;
 }
 
 .project-map {
@@ -138,4 +175,73 @@ button:disabled {
 
 button:hover:not(:disabled) {
     background: #6a751b;
+}
+
+.vehicles-section h2 {
+    text-align: center;
+}
+
+.accident-section {
+    width: 50%;
+    margin-top: 20px;
+}
+
+.accident-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #d9d24f;
+    text-align: center;
+}
+
+.accident-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.accident-details {
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.accident-summary {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.accident-info {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.view-map-button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    background-color: #5bc0de;
+    color: #020202;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.view-map-button:hover {
+    background-color: #31b0d5;
+}
+
+.no-accident {
+    font-size: 1.2rem;
+    text-align: center;
+    color: #777;
+}
+
+p {
+    color: #272525;
 }

@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./Css/login.css"; // ملف CSS منفصل
+import "./Css/login.css";
 import { firebaseApp } from "./firebaseConfig";
 import logo from "./images/logo.png";
+import sampleVideo from "./video/230707_small.mp4"; // استبدل بـمسار الفيديو الخاص بك
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,16 +17,15 @@ const Login = () => {
   const auth = getAuth(firebaseApp);
 
   useEffect(() => {
-    // تحقق من حالة الخروج في localStorage
     if (localStorage.getItem("logout")) {
       toast.error("You have successfully logged out", {
         position: "bottom-right",
         autoClose: 2000,
         hideProgressBar: true,
         closeButton: false,
-        theme: "colored", // لجعل الإشعار أحمر
+        theme: "colored",
       });
-      // إزالة الحالة بعد عرض الإشعار
+
       localStorage.removeItem("logout");
     }
   }, []);
@@ -49,6 +49,10 @@ const Login = () => {
 
   return (
     <div className="login">
+      <video className="background-video" autoPlay loop muted>
+        <source src={sampleVideo} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <div className="login-container">
         <div className="login-box">
           <div className="logo">

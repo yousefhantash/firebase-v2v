@@ -1,16 +1,14 @@
-import { Route, Routes } from "react-router-dom"; // استيراد Routes و Route
+import { Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./Dashboard";
-import Login from "./Login"; // تأكد من أنك تستورد مكون تسجيل الدخول
+import Login from "./Login";
 
 function App() {
   return (
     <Routes>
-      {" "}
-      {/* استخدام Routes لتعريف المسارات */}
-      <Route path="/login" element={<Login />} /> {/* مسار صفحة تسجيل الدخول */}
-      <Route path="/dashboard" element={<Dashboard />} />{" "}
-      {/* مسار صفحة Dashboard */}
-      {/* يمكنك إضافة مسارات أخرى هنا */}
+      <Route path="/" element={<Navigate to="/login" />} />
+
+      <Route path="/login" element={<Login />} />
+      <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );
 }
